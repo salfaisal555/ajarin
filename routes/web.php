@@ -31,7 +31,24 @@ Route::middleware('auth')->group(function () {
 
     // 2. User Management (Admin)
     Route::resource('users', UserController::class);
+    Route::post('/users/import', [App\Http\Controllers\UserController::class, 'import'])->name('users.import');
+    Route::get('/users/template', [App\Http\Controllers\UserController::class, 'downloadTemplate'])->name('users.download_template');
 
+    Route::get('/force-change-password', function () {
+        return view('auth.force-change');
+    })->name('password.force_change');
+
+    Route::post('/force-change-password', function (\Illuminate\Http\Request $request) {
+        $request->validate([
+            'password' => 'required|min:8|confirmed', // Butuh input 'password' dan 'password_confirmation'
+        ]);
+
+        $user = Auth::user();
+        $user->password = \Illuminate\Support\Facades\Hash::make($request->password);
+        $user->save();
+
+        return redirect('/dashboard')->with('success', 'Password berhasil diamankan! Selamat datang.');
+    })->name('password.force_update');
     // 3. Course Management (Guru)
     Route::resource('courses', CourseController::class);
     // ROUTE BARU: Halaman khusus untuk menyusun materi (Step 2 setelah buat kelas)

@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\TemplateAkunExport;
+use App\Imports\UsersImport;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules;
+use Maatwebsite\Excel\Facades\Excel;
 
 class UserController extends Controller
 {
@@ -50,26 +53,45 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        try {
-            $request->validate([
-                'name' => ['required', 'string', 'max:255'],
-                'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-                'role' => ['required', 'in:guru,siswa'],
-                'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            ]);
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'role' => 'required|in:guru,siswa',
+        ]);
 
-            User::create([
-                'name' => $request->name,
-                'email' => $request->email,
-                'role' => $request->role,
-                'password' => Hash::make($request->password),
-            ]);
+        \App\Models\User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'role' => $request->role,
+            // Set password otomatis ke "siswa123"
+            'password' => bcrypt('siswa123'),
+        ]);
 
-            return redirect()->route('users.index')->with('success', 'Akun berhasil dibuat!');
+        return redirect()->route('users.index')->with('success', 'Akun berhasil dibuat dengan password default: siswa123');
+    }
 
-        } catch (\Exception $e) {
-            return back()->withInput()->with('error', 'Gagal membuat akun. Silakan coba lagi.');
+    // Fungsi untuk proses upload file excel
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv',
+        ]);
+
+        Excel::import(new UsersImport, $request->file('file'));
+
+        return redirect()->route('users.index')->with('success', 'Data siswa berhasil di-import secara massal!');
+    }
+
+    // Fungsi untuk download template excel/csv kosong
+    // Fungsi untuk download template excel (.xlsx)
+    public function downloadTemplate()
+    {
+        // Membersihkan buffer output yang mengganggu proses download
+        if (ob_get_length()) {
+            ob_end_clean();
         }
+
+        return Excel::download(new TemplateAkunExport, 'Template_Import_Akun.xlsx');
     }
 
     /**
