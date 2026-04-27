@@ -302,6 +302,10 @@
                         <label class="block text-sm font-bold text-gray-700 mb-1">Password Baru <span class="text-xs text-gray-400 font-normal">(Opsional)</span></label>
                         <input type="password" name="password" class="w-full rounded-xl border-gray-200 focus:border-teal-500 focus:ring focus:ring-teal-200 transition-shadow" placeholder="Kosongkan jika tidak ingin mengubah">
                     </div>
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-1">Konfirmasi Password<span class="text-xs text-gray-400 font-normal"></span></label>
+                        <input type="password" name="password_confirmation" class="w-full rounded-xl border-gray-200 focus:border-teal-500 focus:ring focus:ring-teal-200 transition-shadow" placeholder="Kosongkan jika tidak ingin mengubah">
+                    </div>
                 </div>
                 
                 <div class="px-6 py-4 bg-gray-50 border-t border-gray-100 flex justify-end gap-3">

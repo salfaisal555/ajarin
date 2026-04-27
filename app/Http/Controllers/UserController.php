@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules;
 use Shuchkin\SimpleXLSX;
+use Shuchkin\SimpleXLSXGen;
 
 class UserController extends Controller
 {
@@ -74,7 +75,21 @@ class UserController extends Controller
     // Fungsi untuk download template excel (.xlsx)
     public function downloadTemplate()
     {
-        dd('PING! Rute berhasil ditembus dan controller berjalan!');
+        // Bersihkan output buffer agar file tidak rusak (corrupt/blank page)
+        if (ob_get_length()) {
+            ob_end_clean();
+        }
+
+        // Siapkan data template
+        $data = [
+            ['Nama Lengkap', 'Email', 'Role (guru/siswa)'], // Baris 1 (Header)
+            ['Budi Santoso', 'budi@sekolah.com', 'siswa'],  // Baris 2
+            ['Siti Aminah', 'siti@sekolah.com', 'guru'],    // Baris 3
+        ];
+
+        // Buat file dan langsung eksekusi download
+        SimpleXLSXGen::fromArray($data)->downloadAs('Template_Import_Akun.xlsx');
+        exit;
     }
 
     // 2. Fungsi untuk memproses data Excel yang di-upload
