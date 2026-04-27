@@ -1,18 +1,14 @@
 <nav x-data="{ open: false }" class="bg-gradient-to-r from-teal-500 to-cyan-600 shadow-lg">
-    <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
             <div class="flex items-center">
-                <!-- Logo -->
                 <div class="shrink-0 flex items-center">
                     <a href="{{ route('dashboard') }}" class="flex items-center">
                         <span class="text-2xl font-bold text-white tracking-wide">Ajarin</span>
                     </a>
                 </div>
 
-                <!-- Navigation Links -->
                 <div class="hidden space-x-4 sm:ml-10 md:flex">
-                    
                     
                     @if(Auth::user()->role == 'admin')
                         <a href="{{ route('users.index') }}" 
@@ -32,30 +28,32 @@
                            title="Segera Hadir">
                             Monitoring
                         </a>
-    @endif
+                    @endif
 
                     @if(Auth::user()->role == 'guru')
-                <a href="{{ route('courses.index') }}" class="block px-4 py-3 rounded-lg text-white font-medium
-                          {{ request()->routeIs('courses.*') ? 'bg-white/20' : 'hover:bg-white/10' }}">
-                    Kelas Saya
-                </a>
-                @endif
+                        <a href="{{ route('courses.index') }}" 
+                           class="inline-flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200
+                                  {{ request()->routeIs('courses.*') ? 'bg-white/20 text-white' : 'text-white/90 hover:bg-white/10 hover:text-white' }}">
+                            Kelas Saya
+                        </a>
+                    @endif
 
-                @if(Auth::user()->role == 'siswa')
-    <a href="{{ route('student.dashboard') }}" class="block px-4 py-3 rounded-lg text-white font-medium
-                          {{ request()->routeIs('courses.*') ? 'bg-white/20' : 'hover:bg-white/10' }}">
-        My Course
-    </a>
-    <a href="{{ route('student.catalog') }}" class="block px-4 py-3 rounded-lg text-white font-medium
-                          {{ request()->routeIs('courses.*') ? 'bg-white/20' : 'hover:bg-white/10' }}">
-        Katalog Kelas
-    </a>
-    @endif
+                    @if(Auth::user()->role == 'siswa')
+                        <a href="{{ route('student.dashboard') }}" 
+                           class="inline-flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200
+                                  {{ request()->routeIs('student.dashboard') ? 'bg-white/20 text-white' : 'text-white/90 hover:bg-white/10 hover:text-white' }}">
+                            My Course
+                        </a>
+                        <a href="{{ route('student.catalog') }}" 
+                           class="inline-flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200
+                                  {{ request()->routeIs('student.catalog') ? 'bg-white/20 text-white' : 'text-white/90 hover:bg-white/10 hover:text-white' }}">
+                            Katalog Kelas
+                        </a>
+                    @endif
 
                 </div>
             </div>
 
-            <!-- Right Side - User Profile -->
             <div class="hidden md:flex md:items-center md:space-x-4">
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
@@ -103,7 +101,6 @@
                 </x-dropdown>
             </div>
 
-            <!-- Hamburger -->
             <div class="flex items-center md:hidden">
                 <button @click="open = ! open" class="p-2 rounded-lg text-white hover:bg-white/10 transition-colors">
                     <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
@@ -115,7 +112,6 @@
         </div>
     </div>
 
-    <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden md:hidden border-t border-white/20">
         <div class="pt-2 pb-3 space-y-1 px-4">
             
@@ -136,14 +132,28 @@
             @endif
 
             @if(Auth::user()->role == 'guru')
-                <a href="{{ route('courses.index') }}" class="block px-4 py-3 rounded-lg text-white font-medium
+                <a href="{{ route('courses.index') }}" 
+                   class="block px-4 py-3 rounded-lg text-white font-medium
                           {{ request()->routeIs('courses.*') ? 'bg-white/20' : 'hover:bg-white/10' }}">
                     Kelas Saya
                 </a>
-                @endif
+            @endif
+
+            @if(Auth::user()->role == 'siswa')
+                <a href="{{ route('student.dashboard') }}" 
+                   class="block px-4 py-3 rounded-lg text-white font-medium
+                          {{ request()->routeIs('student.dashboard') ? 'bg-white/20' : 'hover:bg-white/10' }}">
+                    My Course
+                </a>
+                <a href="{{ route('student.catalog') }}" 
+                   class="block px-4 py-3 rounded-lg text-white font-medium
+                          {{ request()->routeIs('student.catalog') ? 'bg-white/20' : 'hover:bg-white/10' }}">
+                    Katalog Kelas
+                </a>
+            @endif
+
         </div>
 
-        <!-- Responsive User Info -->
         <div class="pt-4 pb-3 border-t border-white/20">
             <div class="px-4 mb-3">
                 <div class="flex items-center space-x-3">
