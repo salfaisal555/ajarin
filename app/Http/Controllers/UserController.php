@@ -2,14 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Exports\TemplateAkunExport;
-use App\Imports\UsersImport;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules;
-use Maatwebsite\Excel\Facades\Excel;
+use Shuchkin\SimpleXLSX;
 
 class UserController extends Controller
 {
@@ -59,7 +57,7 @@ class UserController extends Controller
             'role' => 'required|in:guru,siswa',
         ]);
 
-        \App\Models\User::create([
+        User::create([
             'name' => $request->name,
             'email' => $request->email,
             'role' => $request->role,
@@ -71,28 +69,55 @@ class UserController extends Controller
     }
 
     // Fungsi untuk proses upload file excel
-    public function import(Request $request)
-    {
-        $request->validate([
-            'file' => 'required|mimes:xlsx,xls,csv',
-        ]);
-
-        Excel::import(new UsersImport, $request->file('file'));
-
-        return redirect()->route('users.index')->with('success', 'Data siswa berhasil di-import secara massal!');
-    }
 
     // Fungsi untuk download template excel/csv kosong
     // Fungsi untuk download template excel (.xlsx)
     public function downloadTemplate()
     {
-        // Membersihkan buffer output yang mengganggu proses download
-        if (ob_get_length()) {
-            ob_end_clean();
-        }
-
-        return Excel::download(new TemplateAkunExport, 'Template_Import_Akun.xlsx');
+        dd('PING! Rute berhasil ditembus dan controller berjalan!');
     }
+
+    // 2. Fungsi untuk memproses data Excel yang di-upload
+    public function import(Request $request)
+    {
+        // Validasi file yang diupload wajib excel
+        $request->validate([
+            'file' => 'required|mimes:xlsx',
+        ]);
+
+        $filePath = $request->file('file')->getRealPath();
+
+        // Baca file menggunakan SimpleXLSX
+        if ($xlsx = SimpleXLSX::parse($filePath)) {
+            $rows = $xlsx->rows();
+
+            // Hapus baris pertama (Header) agar tidak ikut tersimpan ke database
+            unset($rows[0]);
+
+            foreach ($rows as $row) {
+                // Mapping berdasarkan urutan kolom: [0] = Nama, [1] = Email, [2] = Role
+                $nama = $row[0] ?? null;
+                $email = $row[1] ?? null;
+                $role = isset($row[2]) ? strtolower($row[2]) : 'siswa';
+
+                // Simpan jika nama & email tidak kosong, dan email belum dipakai
+                if ($nama && $email && ! User::where('email', $email)->exists()) {
+                    User::create([
+                        'name' => $nama,
+                        'email' => $email,
+                        'role' => $role,
+                        'password' => Hash::make('siswa123'), // Default Password!
+                    ]);
+                }
+            }
+
+            return redirect()->route('users.index')->with('success', 'Data siswa berhasil di-import secara massal!');
+        } else {
+            return redirect()->route('users.index')->with('error', 'Gagal membaca file Excel. Pastikan formatnya adalah .xlsx');
+        }
+    }
+
+    // Fungsi untuk memproses data Excel yang di-upload
 
     /**
      * Display the specified resource.
