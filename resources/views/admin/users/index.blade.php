@@ -18,13 +18,13 @@
                     <p class="text-white/90 text-base sm:text-lg">Manajemen data Guru dan Siswa</p>
                 </div>
                 <div class="flex items-center gap-3">
-                    <button type="button" onclick="openImportModal()" class="inline-flex items-center px-4 sm:px-5 py-2.5 sm:py-3 bg-emerald-500 text-white font-bold rounded-xl shadow-lg hover:bg-emerald-600 transition-all duration-300 transform hover:-translate-y-1">
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                    <button type="button" onclick="openImportModal()" aria-label="Import data akun dari file Excel" class="inline-flex items-center px-4 sm:px-5 py-2.5 sm:py-3 bg-emerald-500 text-white font-bold rounded-xl shadow-lg hover:bg-emerald-600 transition-all duration-300 transform hover:-translate-y-1">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                         Import Excel
                     </button>
 
-                    <button type="button" onclick="openAddModal()" class="inline-flex items-center px-4 sm:px-5 py-2.5 sm:py-3 bg-white text-teal-600 font-bold rounded-xl shadow-lg hover:bg-teal-50 transition-all duration-300 transform hover:-translate-y-1">
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                    <button type="button" onclick="openAddModal()" aria-label="Tambah akun baru secara manual" class="inline-flex items-center px-4 sm:px-5 py-2.5 sm:py-3 bg-white text-teal-600 font-bold rounded-xl shadow-lg hover:bg-teal-50 transition-all duration-300 transform hover:-translate-y-1">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                         Tambah Manual
                     </button>
                 </div>
@@ -40,11 +40,12 @@
                     
                     <div class="relative flex-1">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                             </svg>
                         </div>
                         <input type="text" name="search" value="{{ request('search') }}" 
+                               aria-label="Cari nama atau email akun"
                                class="w-full pl-10 pr-4 py-2.5 rounded-xl border-gray-200 focus:border-teal-500 focus:ring focus:ring-teal-200 transition-shadow bg-white shadow-sm" 
                                placeholder="Cari nama atau email...">
                     </div>
@@ -52,14 +53,14 @@
                     <div class="flex flex-col sm:flex-row gap-3">
                         <div class="relative w-full sm:w-48" id="customDropdown">
                             <input type="hidden" name="role" id="roleInput" value="{{ request('role') }}">
-                            <button type="button" onclick="toggleDropdown()" id="dropdownButton" class="w-full flex justify-between items-center py-2.5 px-4 rounded-xl border border-gray-200 bg-white text-gray-700 shadow-sm focus:outline-none focus:border-teal-500 focus:ring focus:ring-teal-200 transition-all duration-200 font-medium">
+                            <button type="button" onclick="toggleDropdown()" id="dropdownButton" aria-label="Filter berdasarkan Role" aria-haspopup="true" aria-expanded="false" class="w-full flex justify-between items-center py-2.5 px-4 rounded-xl border border-gray-200 bg-white text-gray-700 shadow-sm focus:outline-none focus:border-teal-500 focus:ring focus:ring-teal-200 transition-all duration-200 font-medium">
                                 <span id="dropdownText">
                                     @if(request('role') == 'guru') Guru
                                     @elseif(request('role') == 'siswa') Siswa
                                     @else Semua Role
                                     @endif
                                 </span>
-                                <svg class="w-4 h-4 text-gray-400 transition-transform duration-200" id="dropdownArrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                                <svg class="w-4 h-4 text-gray-400 transition-transform duration-200" id="dropdownArrow" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
                             </button>
 
                             <div id="dropdownMenu" class="absolute z-20 hidden w-full mt-2 bg-white rounded-xl shadow-lg border border-gray-100 transform opacity-0 scale-95 transition-all duration-200 origin-top">
@@ -83,9 +84,9 @@
                             </div>
                         </div>
                         
-                        <button type="submit" class="px-6 py-2.5 bg-gradient-to-r from-teal-500 to-cyan-600 text-white rounded-xl font-medium shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5">
+                        <button type="submit" aria-label="Terapkan filter pencarian" class="px-6 py-2.5 bg-gradient-to-r from-teal-500 to-cyan-600 text-white rounded-xl font-medium shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5">
                             <span class="flex items-center justify-center">
-                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
                                 </svg>
                                 Filter
@@ -93,8 +94,8 @@
                         </button>
                         
                         @if(request('search') || request('role'))
-                            <a href="{{ route('users.index') }}" class="px-5 py-2.5 bg-gray-100 text-gray-600 rounded-xl font-medium hover:bg-gray-200 transition text-center flex items-center justify-center shadow-sm">
-                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <a href="{{ route('users.index') }}" aria-label="Reset semua filter" class="px-5 py-2.5 bg-gray-100 text-gray-600 rounded-xl font-medium hover:bg-gray-200 transition text-center flex items-center justify-center shadow-sm">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
                                 </svg>
                                 Reset
@@ -110,7 +111,6 @@
                         <tr>
                             <th class="px-4 sm:px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">User Info</th>
                             <th class="px-4 sm:px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Role</th>
-                            <th class="px-4 sm:px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider hidden sm:table-cell">Status</th>
                             <th class="px-4 sm:px-6 py-4 text-center text-xs font-bold text-gray-600 uppercase tracking-wider">Aksi</th>
                         </tr>
                     </thead>
@@ -120,7 +120,7 @@
                             <td class="px-4 sm:px-6 py-4">
                                 <div class="flex items-center">
                                     <div class="flex-shrink-0 h-10 w-10 sm:h-12 sm:w-12">
-                                        <div class="h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-gradient-to-br from-teal-400 to-cyan-500 flex items-center justify-center text-white font-bold text-base sm:text-lg shadow-lg">
+                                        <div class="h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-gradient-to-br from-teal-400 to-cyan-500 flex items-center justify-center text-white font-bold text-base sm:text-lg shadow-lg" aria-hidden="true">
                                             {{ strtoupper(substr($user->name, 0, 1)) }}
                                         </div>
                                     </div>
@@ -137,22 +137,17 @@
                                     <span class="px-3 py-1.5 inline-flex text-xs leading-5 font-bold rounded-full bg-gradient-to-r from-teal-100 to-teal-50 text-teal-800 border border-teal-200 shadow-sm">Siswa</span>
                                 @endif
                             </td>
-                            <td class="px-4 sm:px-6 py-4 whitespace-nowrap hidden sm:table-cell">
-                                <span class="flex items-center text-sm text-teal-600 font-semibold">
-                                    <span class="w-2 h-2 rounded-full bg-teal-500 mr-2 animate-pulse shadow-lg shadow-teal-500/50"></span>
-                                    Aktif
-                                </span>
-                            </td>
                             <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-center">
                                 <div class="flex items-center justify-center gap-2">
                                     <button type="button" 
+                                        aria-label="Edit akun {{ $user->name }}"
                                         data-id="{{ $user->id }}" 
                                         data-name="{{ $user->name }}" 
                                         data-email="{{ $user->email }}" 
                                         data-role="{{ $user->role }}" 
                                         onclick="openEditModal(this)" 
                                         class="inline-flex items-center px-3 py-2 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md">
-                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
                                         <span class="hidden sm:inline">Edit</span>
                                     </button>
                                     
@@ -160,8 +155,8 @@
                                         @csrf
                                         @method('DELETE')
                                     </form>
-                                    <button onclick="confirmDelete('{{ $user->id }}', '{{ $user->name }}')" class="inline-flex items-center px-3 py-2 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md">
-                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                    <button onclick="confirmDelete('{{ $user->id }}', '{{ $user->name }}')" aria-label="Hapus akun {{ $user->name }}" class="inline-flex items-center px-3 py-2 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md">
+                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                                         <span class="hidden sm:inline">Hapus</span>
                                     </button>
                                 </div>
@@ -169,7 +164,7 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="5" class="px-6 py-12 text-center text-gray-500">
+                            <td colspan="4" class="px-6 py-12 text-center text-gray-500">
                                 <p>Tidak ada data ditemukan</p>
                             </td>
                         </tr>
@@ -187,12 +182,12 @@
         </div>
     </div>
 
-    <div id="modalAddUser" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center backdrop-blur-sm transition-opacity">
+    <div id="modalAddUser" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center backdrop-blur-sm transition-opacity" aria-modal="true" role="dialog">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 overflow-hidden">
             <div class="px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-gray-50 to-white flex justify-between items-center">
                 <h3 class="text-xl font-bold text-gray-800">Tambah Akun Baru</h3>
-                <button type="button" onclick="closeAddModal()" class="text-gray-400 hover:text-red-500 transition-colors">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                <button type="button" onclick="closeAddModal()" aria-label="Tutup modal tambah akun" class="text-gray-400 hover:text-red-500 transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
             </div>
             
@@ -201,7 +196,7 @@
                 <div class="p-6 space-y-4">
                     <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-lg">
                         <div class="flex">
-                            <svg class="h-5 w-5 text-blue-400 mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/></svg>
+                            <svg class="h-5 w-5 text-blue-400 mr-2" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/></svg>
                             <p class="text-sm text-blue-700 font-medium">
                                 Password akun baru otomatis di-set ke: <br>
                                 <strong class="text-lg tracking-widest text-blue-900">siswa123</strong>
@@ -234,12 +229,12 @@
         </div>
     </div>
 
-    <div id="modalImportExcel" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center backdrop-blur-sm transition-opacity">
+    <div id="modalImportExcel" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center backdrop-blur-sm transition-opacity" aria-modal="true" role="dialog">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 overflow-hidden">
             <div class="px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-gray-50 to-white flex justify-between items-center">
                 <h3 class="text-xl font-bold text-gray-800">Import Data via Excel</h3>
-                <button type="button" onclick="closeImportModal()" class="text-gray-400 hover:text-red-500 transition-colors">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                <button type="button" onclick="closeImportModal()" aria-label="Tutup modal import Excel" class="text-gray-400 hover:text-red-500 transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
             </div>
             
@@ -255,10 +250,10 @@
                     </a>
 
                     <div class="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:bg-gray-50 transition cursor-pointer" onclick="document.getElementById('fileExcel').click()">
-                        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                         <p class="mt-2 text-sm font-medium text-gray-900">Klik untuk memilih file Excel</p>
                         <p class="mt-1 text-xs text-gray-500" id="fileNameDisplay">Belum ada file dipilih</p>
-                        <input type="file" id="fileExcel" name="file" accept=".xlsx, .xls" class="hidden" required onchange="document.getElementById('fileNameDisplay').innerText = this.files[0].name">
+                        <input type="file" id="fileExcel" name="file" accept=".xlsx, .xls" class="hidden" required aria-label="Input file Excel" onchange="document.getElementById('fileNameDisplay').innerText = this.files[0].name">
                     </div>
                 </div>
                 
@@ -270,12 +265,12 @@
         </div>
     </div>
 
-    <div id="modalEditUser" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center backdrop-blur-sm transition-opacity">
+    <div id="modalEditUser" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center backdrop-blur-sm transition-opacity" aria-modal="true" role="dialog">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 overflow-hidden">
             <div class="px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-gray-50 to-white flex justify-between items-center">
                 <h3 class="text-xl font-bold text-gray-800">Edit Akun</h3>
-                <button type="button" onclick="closeEditModal()" class="text-gray-400 hover:text-red-500 transition-colors">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                <button type="button" onclick="closeEditModal()" aria-label="Tutup modal edit akun" class="text-gray-400 hover:text-red-500 transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
             </div>
             
@@ -284,27 +279,27 @@
                 @method('PUT')
                 <div class="p-6 space-y-4">
                     <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-1">Nama Lengkap</label>
+                        <label for="edit_name" class="block text-sm font-bold text-gray-700 mb-1">Nama Lengkap</label>
                         <input type="text" id="edit_name" name="name" class="w-full rounded-xl border-gray-200 focus:border-teal-500 focus:ring focus:ring-teal-200 transition-shadow" required>
                     </div>
                     <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-1">Email</label>
+                        <label for="edit_email" class="block text-sm font-bold text-gray-700 mb-1">Email</label>
                         <input type="email" id="edit_email" name="email" class="w-full rounded-xl border-gray-200 focus:border-teal-500 focus:ring focus:ring-teal-200 transition-shadow" required>
                     </div>
                     <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-1">Role</label>
+                        <label for="edit_role" class="block text-sm font-bold text-gray-700 mb-1">Role</label>
                         <select id="edit_role" name="role" class="w-full rounded-xl border-gray-200 focus:border-teal-500 focus:ring focus:ring-teal-200 transition-shadow" required>
                             <option value="guru">Guru</option>
                             <option value="siswa">Siswa</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-1">Password Baru <span class="text-xs text-gray-400 font-normal">(Opsional)</span></label>
-                        <input type="password" name="password" class="w-full rounded-xl border-gray-200 focus:border-teal-500 focus:ring focus:ring-teal-200 transition-shadow" placeholder="Kosongkan jika tidak ingin mengubah">
+                        <label for="edit_password" class="block text-sm font-bold text-gray-700 mb-1">Password Baru <span class="text-xs text-gray-400 font-normal">(Opsional)</span></label>
+                        <input type="password" id="edit_password" name="password" class="w-full rounded-xl border-gray-200 focus:border-teal-500 focus:ring focus:ring-teal-200 transition-shadow" placeholder="Kosongkan jika tidak ingin mengubah">
                     </div>
                     <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-1">Konfirmasi Password<span class="text-xs text-gray-400 font-normal"></span></label>
-                        <input type="password" name="password_confirmation" class="w-full rounded-xl border-gray-200 focus:border-teal-500 focus:ring focus:ring-teal-200 transition-shadow" placeholder="Kosongkan jika tidak ingin mengubah">
+                        <label for="edit_password_confirmation" class="block text-sm font-bold text-gray-700 mb-1">Konfirmasi Password<span class="text-xs text-gray-400 font-normal"></span></label>
+                        <input type="password" id="edit_password_confirmation" name="password_confirmation" class="w-full rounded-xl border-gray-200 focus:border-teal-500 focus:ring focus:ring-teal-200 transition-shadow" placeholder="Kosongkan jika tidak ingin mengubah">
                     </div>
                 </div>
                 

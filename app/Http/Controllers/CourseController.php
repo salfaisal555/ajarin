@@ -124,4 +124,78 @@ class CourseController extends Controller
 
         return back()->with('success', 'Informasi kelas berhasil diperbarui!');
     }
+
+    // METHOD BARU: Export Data Progress Siswa ke CSV
+    public function exportProgress(Course $course)
+    {
+        if ($course->teacher_id != Auth::id()) {
+            abort(403);
+        }
+
+        $students = $course->students()->get()->map(function ($student) use ($course) {
+
+            // Hitung Progress
+            $totalItems = DB::table('materials')
+                ->join('chapters', 'materials.chapter_id', '=', 'chapters.id')
+                ->where('chapters.course_id', $course->id)
+                ->count();
+
+            $completedItems = DB::table('progress')
+                ->where('student_id', $student->id)
+                ->where('course_id', $course->id)
+                ->where('is_completed', true)
+                ->count();
+
+            $progress = $totalItems > 0 ? round(($completedItems / $totalItems) * 100) : 0;
+            $student->progress_percent = $progress;
+
+            // HITUNG RATA-RATA NILAI SISWA DI KELAS INI
+            $avgScore = DB::table('assignment_scores')
+                ->join('assignments', 'assignment_scores.assignment_id', '=', 'assignments.id')
+                ->where('assignments.course_id', $course->id)
+                ->where('assignment_scores.student_id', $student->id)
+                ->avg('assignment_scores.score');
+
+            $student->average_score = $avgScore ? round($avgScore, 2) : 0;
+
+            return $student;
+        });
+
+        $fileName = 'Rekap_Nilai_'.preg_replace('/[^A-Za-z0-9\-]/', '_', $course->title).'_'.date('Y-m-d').'.csv';
+
+        $headers = [
+            'Content-type' => 'text/csv',
+            'Content-Disposition' => "attachment; filename=$fileName",
+            'Pragma' => 'no-cache',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires' => '0',
+        ];
+
+        // TAMBAHKAN 'Rata-rata Nilai' DI JUDUL KOLOM EXCEL
+        $columns = ['No', 'Nama Siswa', 'Email', 'Progress (%)', 'Rata-rata Nilai', 'Status Penyelesaian'];
+
+        $callback = function () use ($students, $columns) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $columns);
+
+            $no = 1;
+            foreach ($students as $student) {
+                $status = $student->progress_percent == 100 ? 'Selesai' : 'Belum Selesai';
+
+                $row = [
+                    $no++,
+                    $student->name,
+                    $student->email,
+                    $student->progress_percent.'%',
+                    $student->average_score, // Masukkan nilai ke baris Excel
+                    $status,
+                ];
+                fputcsv($file, $row);
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
 }

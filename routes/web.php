@@ -60,10 +60,14 @@ Route::middleware('auth')->group(function () {
     // Route Bab & Materi (Tetap sama)
     Route::post('/courses/{course}/chapters', [ChapterController::class, 'store'])->name('chapters.store');
     Route::put('/chapters/{chapter}', [ChapterController::class, 'update'])->name('chapters.update');
+    // Route Export Data Monitoring
+    Route::get('/courses/{course}/export', [CourseController::class, 'exportProgress'])->name('courses.export');
 
     Route::delete('/chapters/{chapter}', [ChapterController::class, 'destroy'])->name('chapters.destroy');
     Route::delete('/chapters/{chapter}', [ChapterController::class, 'destroy'])->name('chapters.destroy');
     Route::get('/chapters/{chapter}/materials/create', [MaterialController::class, 'create'])->name('materials.create');
+    Route::get('/materials/{material}/edit', [MaterialController::class, 'edit'])->name('materials.edit');
+    Route::put('/materials/{material}', [MaterialController::class, 'update'])->name('materials.update');
     Route::post('/chapters/{chapter}/materials', [MaterialController::class, 'store'])->name('materials.store');
     Route::delete('/materials/{material}', [MaterialController::class, 'destroy'])->name('materials.destroy');
 

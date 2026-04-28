@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Assignment;
+use App\Models\AssignmentQuestion;
 use App\Models\AssignmentScore;
 use App\Models\Course;
 use App\Models\Material;
 use App\Models\ProjectGroup;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -16,17 +18,35 @@ class StudentController extends Controller
     // 1. Dashboard Siswa
     public function index()
     {
-        $myCourses = Auth::user()->courses()->latest()->get();
+        $user = Auth::user();
 
+        // Mengambil SEMUA data kelas yang didaftar oleh siswa ini
+        // (Menggunakan relasi courses yang sudah sukses kamu buat sebelumnya)
+        $myCourses = $user->courses()->get();
+
+        // Mengirim variabel $myCourses ke view siswa.dashboard
         return view('siswa.dashboard', compact('myCourses'));
     }
 
     // 2. Katalog Kelas
-    public function catalog()
+    public function catalog(Request $request)
     {
-        $availableCourses = Course::whereDoesntHave('students', function ($query) {
-            $query->where('users.id', Auth::id());
-        })->latest()->get();
+        // Mulai query dengan eager loading tabel 'teacher' (guru)
+        // dan kecualikan kelas yang sudah diikuti siswa ini.
+        $query = Course::with('teacher')->whereDoesntHave('students', function ($q) {
+            $q->where('users.id', Auth::id());
+        });
+
+        // FITUR PENCARIAN (Berdasarkan Judul atau Deskripsi Kelas)
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', '%'.$search.'%')
+                    ->orWhere('description', 'like', '%'.$search.'%');
+            });
+        }
+
+        $availableCourses = $query->latest()->get();
 
         return view('siswa.catalog', compact('availableCourses'));
     }
@@ -49,7 +69,7 @@ class StudentController extends Controller
         if (! Auth::user()->courses->contains($course->id)) {
             abort(403);
         }
-        $teacher = \App\Models\User::find($course->teacher_id);
+        $teacher = User::find($course->teacher_id);
         $assignments = $course->assignments()->latest()->get();
 
         return view('siswa.corridor', compact('course', 'teacher', 'assignments'));
@@ -68,7 +88,7 @@ class StudentController extends Controller
             $scoreRecord = AssignmentScore::where('assignment_id', $assignment->id)
                 ->where('student_id', Auth::id())->first();
 
-            $questions = \App\Models\AssignmentQuestion::where('assignment_id', $assignment->id)->get();
+            $questions = AssignmentQuestion::where('assignment_id', $assignment->id)->get();
 
             return view('siswa.assignment_individual', compact('course', 'assignment', 'questions', 'scoreRecord'));
         } else {
@@ -101,7 +121,7 @@ class StudentController extends Controller
     // 7. Hitung dan Simpan Nilai Ujian PG (BARU)
     public function submitIndividual(Request $request, Assignment $assignment)
     {
-        $questions = \App\Models\AssignmentQuestion::where('assignment_id', $assignment->id)->get();
+        $questions = AssignmentQuestion::where('assignment_id', $assignment->id)->get();
         $correctCount = 0;
         $totalQuestions = $questions->count();
 

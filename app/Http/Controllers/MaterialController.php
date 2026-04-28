@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Chapter;
+use App\Models\Course;
 use App\Models\Material;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class MaterialController extends Controller
 {
@@ -44,5 +46,35 @@ class MaterialController extends Controller
         $material->delete();
 
         return back()->with('success', 'Materi berhasil dihapus.');
+    }
+
+    public function edit(Material $material)
+    {
+        // Cari data kelas secara manual menggunakan course_id dari materi
+        $course = Course::find($material->course_id);
+
+        // Pastikan kelas ditemukan dan yang akses adalah guru pemilik kelas
+        if (! $course || $course->teacher_id != Auth::id()) {
+            abort(403);
+        }
+
+        // Kirim data material dan course ke view
+        return view('guru.courses.edit_material', compact('material', 'course'));
+    }
+
+    public function update(Request $request, Material $material)
+    {
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'content' => 'required',
+        ]);
+
+        $material->update([
+            'title' => $request->title,
+            'content' => $request->input('content'), // <--- Gunakan input('content')
+        ]);
+
+        return redirect()->route('courses.curriculum', $material->course_id)
+            ->with('success', 'Materi berhasil diperbarui!');
     }
 }

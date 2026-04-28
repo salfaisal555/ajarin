@@ -22,7 +22,6 @@
 
             <div class="flex-1 overflow-y-auto p-4 space-y-6 custom-scrollbar bg-white">
                 @php 
-                    // LOGIC BARU: Default Terbuka. Nanti dikunci berurutan.
                     $isLocked = false; 
                 @endphp 
                 
@@ -37,10 +36,6 @@
                                     $isCompleted = in_array($material->id, $completedMaterialIds);
                                     $isActive = $currentMaterial && $currentMaterial->id == $material->id;
                                     
-                                    // Status Kunci: 
-                                    // 1. Jika $isLocked TRUE, maka item ini dikunci.
-                                    // 2. Kecuali jika item ini SUDAH selesai (tetap terbuka).
-                                    // 3. Kecuali jika item ini SEDANG aktif (tetap terbuka).
                                     $renderLock = $isLocked && !$isCompleted && !$isActive;
                                 @endphp
 
@@ -68,8 +63,6 @@
                                 @endif
 
                                 @php
-                                    // LOGIC RANTAI:
-                                    // Jika materi ini BELUM selesai, maka materi BERIKUTNYA dikunci.
                                     if (!$isCompleted) {
                                         $isLocked = true;
                                     }
@@ -86,13 +79,41 @@
             @if($currentMaterial)
                 <div id="contentContainer" class="flex-1 overflow-y-auto scroll-smooth">
                     <div class="max-w-4xl mx-auto min-h-full flex flex-col">
+                        
                         <div class="pt-8 px-6 lg:px-12 pb-4">
+                            
+                            <nav class="flex text-sm font-medium text-gray-500 mb-6" aria-label="Breadcrumb">
+                                <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                                    <li class="inline-flex items-center">
+                                        <a href="{{ route('student.dashboard') }}" class="inline-flex items-center hover:text-teal-600 transition-colors">
+                                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                                            Kelas Saya
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <div class="flex items-center">
+                                            <svg class="w-4 h-4 mx-1 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                                            <a href="{{ route('student.corridor', $course->id) }}" class="hover:text-teal-600 transition-colors line-clamp-1 max-w-[120px] sm:max-w-xs">
+                                                {{ $course->title }}
+                                            </a>
+                                        </div>
+                                    </li>
+                                    <li aria-current="page">
+                                        <div class="flex items-center">
+                                            <svg class="w-4 h-4 mx-1 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                                            <span class="text-teal-700 font-bold">Materi Belajar</span>
+                                        </div>
+                                    </li>
+                                </ol>
+                            </nav>
                             <h1 class="text-3xl font-bold text-gray-900 leading-tight">{{ $currentMaterial->title }}</h1>
                             <div class="mt-2 flex items-center text-sm text-gray-500 gap-4">
                                 <span class="bg-gray-200 px-2 py-0.5 rounded text-xs uppercase font-bold tracking-wide">Materi</span>
                             </div>
                         </div>
+                        
                         <hr class="border-gray-200 mx-6 lg:mx-12">
+                        
                         <div class="px-6 lg:px-12 py-8">
                             <article class="prose prose-lg prose-teal max-w-none text-gray-700 leading-relaxed break-words">
                                 {!! $currentMaterial->content !!}
@@ -153,7 +174,6 @@
             let isAlreadyCompleted = {{ in_array($currentMaterial->id ?? 0, $completedMaterialIds) ? 'true' : 'false' }};
             const materialId = "{{ $currentMaterial->id ?? '' }}";
 
-            // Fungsi Save to DB
             async function saveProgress() {
                 try {
                     const response = await fetch(`{{ url('/progress/complete') }}/${materialId}`, {
@@ -176,7 +196,6 @@
                 }
             }
 
-            // Fungsi Trigger Selesai (Visual)
             window.markAsComplete = function() {
                 if (isAlreadyCompleted) return;
 
@@ -191,17 +210,13 @@
                 if(progressBar) progressBar.style.width = newPercent + "%";
                 if(progressText) progressText.innerText = Math.round(newPercent) + "% Selesai";
 
-                // Auto save saat scroll mentok (Silent)
                 saveProgress();
             }
 
-            // Fungsi Klik Tombol Next (Force Save & Redirect)
             window.finishAndNext = async function(url) {
-                // Ubah tombol jadi loading
                 btnNext.innerText = "Menyimpan...";
                 btnNext.disabled = true;
 
-                // Paksa simpan lagi untuk memastikan
                 const success = await saveProgress();
                 
                 if (success) {
@@ -212,7 +227,6 @@
                 }
             }
 
-            // Scroll Listener
             if (container && materialId && !isAlreadyCompleted) {
                 if (container.scrollHeight <= container.clientHeight) {
                     markAsComplete();
