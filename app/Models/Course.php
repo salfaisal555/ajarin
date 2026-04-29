@@ -32,4 +32,9 @@ class Course extends Model
     {
         return $this->hasMany(ForumMessage::class);
     }
+
+    public function teacher()
+    {
+        return $this->belongsTo(User::class, 'teacher_id');
+    }
 }
