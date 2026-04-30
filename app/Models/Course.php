@@ -6,7 +6,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class Course extends Model
 {
-    protected $guarded = []; // Izinkan semua kolom
+    protected $fillable = [
+        'course_id',
+        'chapter_id',
+        'title',
+        'content',
+        'type',
+        'order_index',
+    ];
 
     // Relasi: 1 Kelas punya banyak Bab
     public function chapters()

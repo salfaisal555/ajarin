@@ -6,7 +6,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class Assignment extends Model
 {
-    protected $guarded = [];
+    protected $fillable = [
+        'course_id',
+        'chapter_id',
+        'title',
+        'content',
+        'type',
+        'order_index',
+    ];
 
     // Jika tipenya 'project', maka punya banyak kelompok
     public function groups()

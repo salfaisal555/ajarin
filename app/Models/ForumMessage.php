@@ -6,7 +6,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class ForumMessage extends Model
 {
-    protected $guarded = [];
+    protected $fillable = [
+        'course_id',
+        'chapter_id',
+        'title',
+        'content',
+        'type',
+        'order_index',
+    ];
 
     // Relasi ke Pengirim (User/Siswa/Guru)
     public function user()

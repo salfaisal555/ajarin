@@ -6,8 +6,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class AssignmentQuestion extends Model
 {
-    // Baris ini sangat penting: Mengizinkan semua kolom diisi secara otomatis
-    protected $guarded = [];
+    protected $fillable = [
+        'course_id',
+        'chapter_id',
+        'title',
+        'content',
+        'type',
+        'order_index',
+    ];
 
     // Relasi balik ke Assignment (Ujian)
     public function assignment()

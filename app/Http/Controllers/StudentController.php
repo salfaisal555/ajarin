@@ -105,7 +105,12 @@ class StudentController extends Controller
     // 6. Simpan Link Proyek (Oleh Siswa)
     public function updateProjectLinks(Request $request, ProjectGroup $group)
     {
+        if (! $group->members->contains(Auth::id())) {
+            abort(403, 'Akses Ditolak: Anda bukan anggota kelompok ini!');
+        }
+
         $request->validate([
+            'file_link' => 'required|url',
             'monitoring_link' => 'nullable|url',
             'final_link' => 'nullable|url',
         ]);
@@ -121,6 +126,13 @@ class StudentController extends Controller
     // 7. Hitung dan Simpan Nilai Ujian PG (BARU)
     public function submitIndividual(Request $request, Assignment $assignment)
     {
+        $sudahMengerjakan = AssignmentScore::where('assignment_id', $assignment->id)
+            ->where('student_id', Auth::id())
+            ->exists();
+
+        if ($sudahMengerjakan) {
+            return redirect()->back()->with('error', 'Akses Ditolak: Anda sudah mengerjakan ujian ini!');
+        }
         $questions = AssignmentQuestion::where('assignment_id', $assignment->id)->get();
         $correctCount = 0;
         $totalQuestions = $questions->count();

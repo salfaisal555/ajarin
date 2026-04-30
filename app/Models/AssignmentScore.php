@@ -7,7 +7,14 @@ use Illuminate\Database\Eloquent\Model;
 class AssignmentScore extends Model
 {
     // Mengizinkan penyimpanan ke semua kolom
-    protected $guarded = [];
+    protected $fillable = [
+        'course_id',
+        'chapter_id',
+        'title',
+        'content',
+        'type',
+        'order_index',
+    ];
 
     // Relasi balik ke tabel Assignments (Ujian/Proyek)
     public function assignment()

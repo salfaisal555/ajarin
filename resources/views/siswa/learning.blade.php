@@ -31,7 +31,7 @@
                             {{ $chapter->title }}
                         </h3>
                         <div class="space-y-1">
-                            @foreach($chapter->materials as $material)
+                            @foreach ($chapter->materials as $material)
                                 @php
                                     $isCompleted = in_array($material->id, $completedMaterialIds);
                                     $isActive = $currentMaterial && $currentMaterial->id == $material->id;
@@ -116,7 +116,7 @@
                         
                         <div class="px-6 lg:px-12 py-8">
                             <article class="prose prose-lg prose-teal max-w-none text-gray-700 leading-relaxed break-words">
-                                {!! $currentMaterial->content !!}
+                                {!! clean($currentMaterial->content) !!}
                             </article>
                         </div>
                         <div class="h-40 w-full bg-transparent"></div>

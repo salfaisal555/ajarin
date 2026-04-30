@@ -72,7 +72,7 @@
                         @forelse($chapter->materials as $material)
                         
                         <template id="preview-content-{{ $material->id }}">
-                            {!! $material->content !!}
+                            {!! clean($material->content) !!}
                         </template>
 
                         <div class="flex items-center justify-between p-4 border border-gray-100 rounded-xl hover:bg-teal-50/50 transition group bg-white">
