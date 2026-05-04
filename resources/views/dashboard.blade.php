@@ -144,23 +144,56 @@
             </div>
 
         @elseif(Auth::user()->role == 'guru')
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div class="bg-white p-8 rounded-3xl shadow-xl border border-gray-100 text-center">
-                    <div class="w-20 h-20 bg-teal-100 text-teal-600 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
+                <div class="bg-white p-6 rounded-3xl shadow-xl border border-gray-100 flex items-center gap-5 group hover:border-teal-300 transition-all">
+                    <div class="w-14 h-14 rounded-2xl bg-teal-100 text-teal-600 flex items-center justify-center group-hover:bg-teal-500 group-hover:text-white transition-all">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
                     </div>
-                    <h4 class="text-2xl font-bold text-gray-800 mb-2">Kelola Kelas</h4>
-                    <p class="text-gray-500 mb-6 text-sm">Lihat materi, tugas, dan evaluasi siswa di kelas yang Anda ampu.</p>
-                    <a href="#" class="inline-block px-8 py-3 bg-teal-600 text-white font-bold rounded-xl hover:bg-teal-700 transition">Buka Daftar Kelas</a>
-                </div>
-                <div class="bg-white p-8 rounded-3xl shadow-xl border border-gray-100 text-center">
-                    <div class="w-20 h-20 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
+                    <div>
+                        <p class="text-sm font-bold text-gray-500 uppercase tracking-wider">Total Kelas</p>
+                        <h3 class="text-3xl font-black text-gray-800 tracking-tight">{{ $totalKelas ?? 0 }}</h3>
                     </div>
-                    <h4 class="text-2xl font-bold text-gray-800 mb-2">Forum Diskusi</h4>
-                    <p class="text-gray-500 mb-6 text-sm">Berkomunikasi langsung dengan siswa atau menjawab pertanyaan mereka.</p>
-                    <a href="#" class="inline-block px-8 py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition">Lihat Forum</a>
                 </div>
+                <div class="bg-white p-6 rounded-3xl shadow-xl border border-gray-100 flex items-center gap-5 group hover:border-blue-300 transition-all">
+                    <div class="w-14 h-14 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center group-hover:bg-blue-500 group-hover:text-white transition-all">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                    </div>
+                    <div>
+                        <p class="text-sm font-bold text-gray-500 uppercase tracking-wider">Total Siswa</p>
+                        <h3 class="text-3xl font-black text-gray-800 tracking-tight">{{ $totalSiswa ?? 0 }}</h3>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-3xl shadow-xl border border-gray-100 flex items-center gap-5 group hover:border-purple-300 transition-all">
+                    <div class="w-14 h-14 rounded-2xl bg-purple-100 text-purple-600 flex items-center justify-center group-hover:bg-purple-500 group-hover:text-white transition-all">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+                    </div>
+                    <div>
+                        <p class="text-sm font-bold text-gray-500 uppercase tracking-wider">Total Tugas</p>
+                        <h3 class="text-3xl font-black text-gray-800 tracking-tight">{{ $totalTugas ?? 0 }}</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
+                <div class="p-6 border-b border-gray-50 flex justify-between items-center">
+                    <h4 class="text-lg font-bold text-gray-800">Kelas yang Diampu</h4>
+                    <a href="{{ route('courses.index') }}" class="text-sm font-bold text-teal-600 hover:underline">Lihat Semua &rarr;</a>
+                </div>
+                @forelse($courses ?? [] as $course)
+                <div class="flex items-center justify-between px-6 py-4 border-b border-gray-50 hover:bg-teal-50/30 transition">
+                    <div>
+                        <p class="font-bold text-gray-800">{{ $course->title }}</p>
+                        <p class="text-sm text-gray-500">{{ $course->students_count }} siswa terdaftar</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <a href="{{ route('courses.show', $course->id) }}" class="px-4 py-2 text-sm font-bold text-teal-700 bg-teal-50 rounded-lg hover:bg-teal-100 transition">Monitoring</a>
+                        <a href="{{ route('forum.index', $course->id) }}" class="px-4 py-2 text-sm font-bold text-blue-700 bg-blue-50 rounded-lg hover:bg-blue-100 transition">Forum</a>
+                    </div>
+                </div>
+                @empty
+                <div class="px-6 py-10 text-center text-gray-400">
+                    <p>Belum ada kelas. <a href="{{ route('courses.create') }}" class="text-teal-600 font-bold hover:underline">Buat kelas pertama &rarr;</a></p>
+                </div>
+                @endforelse
             </div>
 
         @elseif(Auth::user()->role == 'siswa')

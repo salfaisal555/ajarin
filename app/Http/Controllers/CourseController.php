@@ -56,41 +56,21 @@ class CourseController extends Controller
         return view('guru.courses.curriculum', compact('course'));
     }
 
-    // METHOD SHOW (MONITORING KELAS) - INI YANG KITA UBAH TOTAL
+    // METHOD SHOW (MONITORING KELAS)
     public function show(Course $course)
     {
         if ($course->teacher_id != Auth::id()) {
             abort(403);
         }
 
-        // 1. Ambil Siswa yang enroll di kelas ini
-        // Kita hitung progress mereka sekalian
+        // Eager load agar tidak N+1 query di view
+        $course->load('assignments.groups.members');
+
         $students = $course->students()->get()->map(function ($student) use ($course) {
-
-            // Hitung Total Item (Materi + Tugas) di kelas ini
-            $totalItems = DB::table('materials')
-                ->join('chapters', 'materials.chapter_id', '=', 'chapters.id')
-                ->where('chapters.course_id', $course->id)
-                ->count();
-
-            // Hitung Item yang sudah diselesaikan siswa
-            $completedItems = DB::table('progress')
-                ->where('student_id', $student->id)
-                ->where('course_id', $course->id)
-                ->where('is_completed', true)
-                ->count();
-
-            // Kalkulasi Persentase
-            $progress = $totalItems > 0 ? round(($completedItems / $totalItems) * 100) : 0;
-
-            $student->progress_percent = $progress;
+            $student->progress_percent = $this->calculateProgress($student->id, $course->id);
 
             return $student;
         });
-
-        // 2. Ambil Data Kelompok (Jika ada tugas kelompok)
-        // Asumsi: Kita ambil kelompok dari assignment terakhir/semua assignment
-        // Untuk simpelnya, kita ambil logic assignment project nanti.
 
         return view('guru.courses.monitoring', compact('course', 'students'));
     }
@@ -107,7 +87,6 @@ class CourseController extends Controller
 
     public function update(Request $request, Course $course)
     {
-        // Pastikan yang edit adalah pemilik kelas
         if ($course->teacher_id != Auth::id()) {
             abort(403);
         }
@@ -125,7 +104,7 @@ class CourseController extends Controller
         return back()->with('success', 'Informasi kelas berhasil diperbarui!');
     }
 
-    // METHOD BARU: Export Data Progress Siswa ke CSV
+    // Export CSV Progress Siswa
     public function exportProgress(Course $course)
     {
         if ($course->teacher_id != Auth::id()) {
@@ -133,23 +112,8 @@ class CourseController extends Controller
         }
 
         $students = $course->students()->get()->map(function ($student) use ($course) {
+            $student->progress_percent = $this->calculateProgress($student->id, $course->id);
 
-            // Hitung Progress
-            $totalItems = DB::table('materials')
-                ->join('chapters', 'materials.chapter_id', '=', 'chapters.id')
-                ->where('chapters.course_id', $course->id)
-                ->count();
-
-            $completedItems = DB::table('progress')
-                ->where('student_id', $student->id)
-                ->where('course_id', $course->id)
-                ->where('is_completed', true)
-                ->count();
-
-            $progress = $totalItems > 0 ? round(($completedItems / $totalItems) * 100) : 0;
-            $student->progress_percent = $progress;
-
-            // HITUNG RATA-RATA NILAI SISWA DI KELAS INI
             $avgScore = DB::table('assignment_scores')
                 ->join('assignments', 'assignment_scores.assignment_id', '=', 'assignments.id')
                 ->where('assignments.course_id', $course->id)
@@ -161,7 +125,7 @@ class CourseController extends Controller
             return $student;
         });
 
-        $fileName = 'Rekap_Nilai_'.preg_replace('/[^A-Za-z0-9\-]/', '_', $course->title).'_'.date('Y-m-d').'.csv';
+        $fileName = 'Rekap_Nilai_'.preg_replace('/[^A-Za-z0-9\\-]/', '_', $course->title).'_'.date('Y-m-d').'.csv';
 
         $headers = [
             'Content-type' => 'text/csv',
@@ -171,7 +135,6 @@ class CourseController extends Controller
             'Expires' => '0',
         ];
 
-        // TAMBAHKAN 'Rata-rata Nilai' DI JUDUL KOLOM EXCEL
         $columns = ['No', 'Nama Siswa', 'Email', 'Progress (%)', 'Rata-rata Nilai', 'Status Penyelesaian'];
 
         $callback = function () use ($students, $columns) {
@@ -181,21 +144,39 @@ class CourseController extends Controller
             $no = 1;
             foreach ($students as $student) {
                 $status = $student->progress_percent == 100 ? 'Selesai' : 'Belum Selesai';
-
-                $row = [
+                fputcsv($file, [
                     $no++,
                     $student->name,
                     $student->email,
                     $student->progress_percent.'%',
-                    $student->average_score, // Masukkan nilai ke baris Excel
+                    $student->average_score,
                     $status,
-                ];
-                fputcsv($file, $row);
+                ]);
             }
 
             fclose($file);
         };
 
         return response()->stream($callback, 200, $headers);
+    }
+
+    /**
+     * Hitung persentase progress belajar siswa di sebuah kelas.
+     * Dipecah ke private method agar tidak duplikat kode.
+     */
+    private function calculateProgress(int $studentId, int $courseId): int
+    {
+        $totalItems = DB::table('materials')
+            ->join('chapters', 'materials.chapter_id', '=', 'chapters.id')
+            ->where('chapters.course_id', $courseId)
+            ->count();
+
+        $completedItems = DB::table('progress')
+            ->where('student_id', $studentId)
+            ->where('course_id', $courseId)
+            ->where('is_completed', true)
+            ->count();
+
+        return $totalItems > 0 ? round(($completedItems / $totalItems) * 100) : 0;
     }
 }

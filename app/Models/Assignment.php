@@ -6,14 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Assignment extends Model
 {
-    protected $fillable = [
-        'course_id',
-        'chapter_id',
-        'title',
-        'content',
-        'type',
-        'order_index',
-    ];
+    protected $guarded = [];
 
     // Jika tipenya 'project', maka punya banyak kelompok
     public function groups()
@@ -31,5 +24,11 @@ class Assignment extends Model
     public function questions()
     {
         return $this->hasMany(AssignmentQuestion::class);
+    }
+
+    // Relasi ke nilai siswa
+    public function scores()
+    {
+        return $this->hasMany(AssignmentScore::class);
     }
 }

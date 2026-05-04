@@ -105,14 +105,15 @@ class StudentController extends Controller
     // 6. Simpan Link Proyek (Oleh Siswa)
     public function updateProjectLinks(Request $request, ProjectGroup $group)
     {
-        if (! $group->members->contains(Auth::id())) {
-            abort(403, 'Akses Ditolak: Anda bukan anggota kelompok ini!');
+        // Pastikan siswa ini memang anggota kelompok tersebut
+        $isMember = $group->members()->where('student_id', Auth::id())->exists();
+        if (! $isMember) {
+            abort(403, 'Anda bukan anggota kelompok ini.');
         }
 
         $request->validate([
-            'file_link' => 'required|url',
-            'monitoring_link' => 'nullable|url',
-            'final_link' => 'nullable|url',
+            'monitoring_link' => 'nullable|url|max:500',
+            'final_link' => 'nullable|url|max:500',
         ]);
 
         $group->update([
@@ -123,16 +124,32 @@ class StudentController extends Controller
         return back()->with('success', 'Link proyek berhasil disimpan!');
     }
 
-    // 7. Hitung dan Simpan Nilai Ujian PG (BARU)
+    // 7. Hitung dan Simpan Nilai Ujian PG
     public function submitIndividual(Request $request, Assignment $assignment)
     {
-        $sudahMengerjakan = AssignmentScore::where('assignment_id', $assignment->id)
+        $course = $assignment->course;
+
+        // Pastikan siswa terdaftar di kelas ini
+        if (! Auth::user()->courses->contains($course->id)) {
+            abort(403, 'Anda tidak terdaftar di kelas ini.');
+        }
+
+        // Cegah submit setelah deadline
+        if (now()->gt($assignment->deadline)) {
+            return redirect()->route('student.corridor', $assignment->course_id)
+                ->with('error', 'Batas waktu pengerjaan sudah lewat.');
+        }
+
+        // Cegah submit lebih dari sekali
+        $alreadySubmitted = AssignmentScore::where('assignment_id', $assignment->id)
             ->where('student_id', Auth::id())
             ->exists();
 
-        if ($sudahMengerjakan) {
-            return redirect()->back()->with('error', 'Akses Ditolak: Anda sudah mengerjakan ujian ini!');
+        if ($alreadySubmitted) {
+            return redirect()->route('student.corridor', $assignment->course_id)
+                ->with('error', 'Anda sudah mengerjakan ujian ini sebelumnya.');
         }
+
         $questions = AssignmentQuestion::where('assignment_id', $assignment->id)->get();
         $correctCount = 0;
         $totalQuestions = $questions->count();
@@ -155,7 +172,7 @@ class StudentController extends Controller
         ]);
 
         return redirect()->route('student.corridor', $assignment->course_id)
-            ->with('success', 'Ujian Selesai! Nilai Anda: '.$score);
+            ->with('success', 'Ujian Selesai! Nilai Anda: '.$score.' / 100');
     }
 
     // 8. Halaman Belajar Materi

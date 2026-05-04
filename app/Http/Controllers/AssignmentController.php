@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Assignment;
 use App\Models\AssignmentQuestion;
+use App\Models\AssignmentScore;
 use App\Models\Course;
 use App\Models\ProjectGroup;
 use Illuminate\Http\Request;
@@ -121,6 +122,11 @@ class AssignmentController extends Controller
             abort(403);
         }
 
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'deadline' => 'required|date',
+        ]);
+
         // Update Data Utama
         $assignment->update([
             'title' => $request->title,
@@ -134,7 +140,7 @@ class AssignmentController extends Controller
             foreach ($request->questions as $q) {
                 if (isset($q['id'])) {
                     // Update soal yang sudah ada
-                    $question = \App\Models\AssignmentQuestion::find($q['id']);
+                    $question = AssignmentQuestion::find($q['id']);
                     $question->update($q);
                     $keptQuestionIds[] = $question->id;
                 } else {
@@ -152,12 +158,12 @@ class AssignmentController extends Controller
             if ($request->groups) {
                 foreach ($request->groups as $g) {
                     if (isset($g['id'])) {
-                        $group = \App\Models\ProjectGroup::find($g['id']);
+                        $group = ProjectGroup::find($g['id']);
                         $group->update(['name' => $g['name']]);
                         $group->members()->sync($g['students'] ?? []); // Sync update anggota
                         $keptGroupIds[] = $group->id;
                     } else {
-                        $newGroup = \App\Models\ProjectGroup::create([
+                        $newGroup = ProjectGroup::create([
                             'assignment_id' => $assignment->id,
                             'name' => $g['name'],
                         ]);
@@ -185,7 +191,7 @@ class AssignmentController extends Controller
     }
 
     // 7. Berikan Nilai untuk Proyek Kelompok
-    public function gradeProject(Request $request, \App\Models\ProjectGroup $group)
+    public function gradeProject(Request $request, ProjectGroup $group)
     {
         // Validasi nilai harus antara 0 sampai 100
         $request->validate([
@@ -200,7 +206,7 @@ class AssignmentController extends Controller
 
         // Loop semua anggota kelompok, dan berikan nilai yang sama ke tabel assignment_scores
         foreach ($group->members as $student) {
-            \App\Models\AssignmentScore::updateOrInsert(
+            AssignmentScore::updateOrInsert(
                 [
                     'assignment_id' => $group->assignment_id,
                     'student_id' => $student->id,

@@ -82,119 +82,164 @@
         </div>
 
         <div class="bg-white rounded-2xl shadow-xl overflow-hidden mb-8">
-            <div class="px-6 py-5 border-b border-gray-100 bg-gradient-to-r from-gray-50 to-white">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-                    <h3 class="text-lg font-bold text-gray-800 flex items-center">
-                        <svg class="w-5 h-5 mr-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-                        </svg>
-                        Progress Belajar Siswa
-                    </h3>
-                    <a href="{{ route('courses.export', $course->id) }}" class="inline-flex items-center px-4 py-2 bg-emerald-600 text-white text-sm font-bold rounded-lg hover:bg-emerald-700 transition shadow-sm">
-    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-    Export CSV
-</a>
-                </div>
-            </div>
-            
-            <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-100">
-                    <thead class="bg-gradient-to-r from-gray-50 to-gray-100">
-                        <tr>
-                            <th class="px-4 sm:px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Nama Siswa</th>
-                            <th class="px-4 sm:px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Status</th>
-                            <th class="px-4 sm:px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider w-1/3">Progress</th>
-                            <th class="px-4 sm:px-6 py-4 text-right text-xs font-bold text-gray-600 uppercase tracking-wider">Nilai</th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-100">
-                        @forelse($students as $student)
-                        <tr class="hover:bg-gradient-to-r hover:from-indigo-50/30 hover:to-purple-50/30 transition-all duration-200">
-                            <td class="px-4 sm:px-6 py-4">
-                                <div class="flex items-center">
-                                    <div class="flex-shrink-0 h-10 w-10 sm:h-12 sm:w-12">
-                                        <div class="h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center text-white font-bold text-base sm:text-lg shadow-lg">
-                                            {{ strtoupper(substr($student->name, 0, 1)) }}
-                                        </div>
-                                    </div>
-                                    <div class="ml-3 sm:ml-4">
-                                        <div class="text-sm font-bold text-gray-900">{{ $student->name }}</div>
-                                        <div class="text-xs sm:text-sm text-gray-500">{{ $student->email }}</div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="px-4 sm:px-6 py-4 whitespace-nowrap">
-                                @if($student->progress_percent >= 100)
-                                    <span class="px-3 py-1.5 inline-flex text-xs font-bold rounded-full bg-gradient-to-r from-green-100 to-green-50 text-green-800 border border-green-200 shadow-sm">
-                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                        </svg>
-                                        Selesai
-                                    </span>
-                                @elseif($student->progress_percent > 0)
-                                    <span class="px-3 py-1.5 inline-flex text-xs font-bold rounded-full bg-gradient-to-r from-yellow-100 to-yellow-50 text-yellow-800 border border-yellow-200 shadow-sm">
-                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                        </svg>
-                                        Belajar
-                                    </span>
-                                @else
-                                    <span class="px-3 py-1.5 inline-flex text-xs font-bold rounded-full bg-gradient-to-r from-gray-100 to-gray-50 text-gray-800 border border-gray-200 shadow-sm">
-                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                        </svg>
-                                        Belum Mulai
-                                    </span>
-                                @endif
-                            </td>
-                            <td class="px-4 sm:px-6 py-4">
-                                <div class="w-full">
-                                    <div class="flex justify-between items-center mb-1">
-                                        <span class="text-xs font-medium text-gray-600">Progress</span>
-                                        <span class="text-xs font-bold text-indigo-600">{{ number_format($student->progress_percent, 0) }}%</span>
-                                    </div>
-                                    <div class="w-full bg-gray-200 rounded-full h-3 shadow-inner overflow-hidden">
-                                        <div class="bg-gradient-to-r from-indigo-500 to-purple-600 h-3 rounded-full transition-all duration-500 shadow-sm" style="width: {{ $student->progress_percent }}%"></div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-right">
-                                @php
-                                    // Mengambil rata-rata SEMUA nilai (Ujian Individual & Proyek Kelompok)
-                                    $avgScore = \App\Models\AssignmentScore::where('student_id', $student->id)
-                                        ->whereHas('assignment', function($q) use ($course) {
-                                            $q->where('course_id', $course->id);
-                                        })->avg('score');
-                                @endphp
-                                
-                                @if(is_numeric($avgScore))
-                                    <span class="text-base font-black {{ $avgScore >= 70 ? 'text-green-600' : 'text-red-500' }}">
-                                        {{ round($avgScore) }}
-                                    </span>
-                                @else
-                                    <span class="text-sm font-bold text-gray-400">-</span>
-                                @endif
-                            </td>
-                        </tr>
-                        @empty
-                        <tr>
-                            <td colspan="4" class="px-6 py-12 text-center">
-                                <div class="flex flex-col items-center justify-center">
-                                    <div class="w-20 h-20 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center mb-4 shadow-inner">
-                                        <svg class="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
-                                        </svg>
-                                    </div>
-                                    <p class="text-lg font-bold text-gray-700 mb-1">Belum ada siswa</p>
-                                    <p class="text-sm text-gray-500">Belum ada siswa yang mendaftar di kelas ini</p>
-                                </div>
-                            </td>
-                        </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
+    <div class="px-6 py-5 border-b border-gray-100 bg-gradient-to-r from-gray-50 to-white">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+            <h3 class="text-lg font-bold text-gray-800 flex items-center">
+                <svg class="w-5 h-5 mr-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                </svg>
+                Progress Belajar & Nilai Siswa
+            </h3>
+            <a href="{{ route('courses.export', $course->id) }}" class="inline-flex items-center px-4 py-2 bg-emerald-600 text-white text-sm font-bold rounded-lg hover:bg-emerald-700 transition shadow-sm">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                Export CSV
+            </a>
         </div>
+    </div>
+    
+    @php
+        // 1. Ambil daftar semua tugas/ujian di kelas ini untuk dijadikan Header Kolom
+        $assignments = $course->assignments()->orderBy('created_at')->get();
+        
+        // 2. Ambil SEMUA nilai sekaligus & kelompokkan berdasarkan ID Siswa (Fix Bug N+1 Query dari QA)
+        $allScores = \App\Models\AssignmentScore::whereIn('assignment_id', $assignments->pluck('id'))
+                        ->get()
+                        ->groupBy('student_id');
+    @endphp
+
+    <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-100">
+            <thead class="bg-gradient-to-r from-gray-50 to-gray-100">
+                <tr>
+                    <th class="px-4 sm:px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider sticky left-0 bg-gray-50 z-10 border-r border-gray-100">Nama Siswa</th>
+                    <th class="px-4 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Status</th>
+                    <th class="px-4 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider min-w-[200px]">Progress</th>
+                    
+                    <!-- Kolom Dinamis: Menampilkan judul tugas sebagai header -->
+                    @foreach($assignments as $index => $assignment)
+                        <th title="{{ $assignment->title }}" class="px-4 py-4 text-center text-xs font-bold text-indigo-600 uppercase tracking-wider whitespace-nowrap">
+                            Tugas {{ $index + 1 }}
+                        </th>
+                    @endforeach
+                    
+                    <th class="px-4 sm:px-6 py-4 text-right text-xs font-black text-gray-800 uppercase tracking-wider whitespace-nowrap bg-gray-100 border-l border-gray-200">
+                        Rata-Rata
+                    </th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-100">
+                @forelse($students as $student)
+                <tr class="hover:bg-gradient-to-r hover:from-indigo-50/30 hover:to-purple-50/30 transition-all duration-200">
+                    <td class="px-4 sm:px-6 py-4 sticky left-0 bg-white group-hover:bg-indigo-50/30 z-10 border-r border-gray-50 transition-colors">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0 h-10 w-10 sm:h-12 sm:w-12">
+                                <div class="h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center text-white font-bold text-base sm:text-lg shadow-lg">
+                                    {{ strtoupper(substr($student->name, 0, 1)) }}
+                                </div>
+                            </div>
+                            <div class="ml-3 sm:ml-4">
+                                <div class="text-sm font-bold text-gray-900 whitespace-nowrap">{{ $student->name }}</div>
+                                <div class="text-xs sm:text-sm text-gray-500 truncate max-w-[150px]">{{ $student->email }}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-4 py-4 whitespace-nowrap">
+                        @if($student->progress_percent >= 100)
+                            <span class="px-3 py-1.5 inline-flex text-xs font-bold rounded-full bg-gradient-to-r from-green-100 to-green-50 text-green-800 border border-green-200 shadow-sm">
+                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                Selesai
+                            </span>
+                        @elseif($student->progress_percent > 0)
+                            <span class="px-3 py-1.5 inline-flex text-xs font-bold rounded-full bg-gradient-to-r from-yellow-100 to-yellow-50 text-yellow-800 border border-yellow-200 shadow-sm">
+                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                Belajar
+                            </span>
+                        @else
+                            <span class="px-3 py-1.5 inline-flex text-xs font-bold rounded-full bg-gradient-to-r from-gray-100 to-gray-50 text-gray-800 border border-gray-200 shadow-sm">
+                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                Belum Mulai
+                            </span>
+                        @endif
+                    </td>
+                    <td class="px-4 py-4">
+                        <div class="w-full">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="text-xs font-medium text-gray-600">Progress</span>
+                                <span class="text-xs font-bold text-indigo-600">{{ number_format($student->progress_percent, 0) }}%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-3 shadow-inner overflow-hidden">
+                                <div class="bg-gradient-to-r from-indigo-500 to-purple-600 h-3 rounded-full transition-all duration-500 shadow-sm" style="width: {{ $student->progress_percent }}%"></div>
+                            </div>
+                        </div>
+                    </td>
+
+                    @php
+                        // Ambil riwayat nilai khusus untuk siswa ini dari array yg sudah disiapkan di atas
+                        $studentScores = $allScores->get($student->id, collect());
+                        $totalScore = 0;
+                        $scoreCount = 0;
+                    @endphp
+
+                    <!-- Tampilkan Nilai Per Tugas Dinamis -->
+                    @foreach($assignments as $assignment)
+                        @php
+                            $scoreRecord = $studentScores->firstWhere('assignment_id', $assignment->id);
+                            $score = $scoreRecord ? $scoreRecord->score : null;
+
+                            if ($score !== null) {
+                                $totalScore += $score;
+                                $scoreCount++;
+                            }
+                        @endphp
+                        <td class="px-4 py-4 text-center whitespace-nowrap">
+                            @if($score !== null)
+                                <span class="font-bold text-gray-700 bg-gray-50 px-3 py-1 rounded border border-gray-200">{{ round($score) }}</span>
+                            @else
+                                <span class="text-gray-300 font-bold" title="Belum mengerjakan">-</span>
+                            @endif
+                        </td>
+                    @endforeach
+
+                    <!-- Nilai Rata-rata Akhir -->
+                    <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-right bg-gray-50 border-l border-gray-100 transition-colors group-hover:bg-indigo-50/50">
+                        @php
+                            $avgScore = $scoreCount > 0 ? $totalScore / $scoreCount : null;
+                        @endphp
+                        
+                        @if($avgScore !== null)
+                            <span class="text-base font-black {{ $avgScore >= 70 ? 'text-green-600' : 'text-red-500' }}">
+                                {{ round($avgScore) }}
+                            </span>
+                        @else
+                            <span class="text-sm font-bold text-gray-400">-</span>
+                        @endif
+                    </td>
+                </tr>
+                @empty
+                <tr>
+                    <td colspan="100%" class="px-6 py-12 text-center">
+                        <div class="flex flex-col items-center justify-center">
+                            <div class="w-20 h-20 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center mb-4 shadow-inner">
+                                <svg class="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+                                </svg>
+                            </div>
+                            <p class="text-lg font-bold text-gray-700 mb-1">Belum ada siswa</p>
+                            <p class="text-sm text-gray-500">Belum ada siswa yang mendaftar di kelas ini</p>
+                        </div>
+                    </td>
+                </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+</div>
 
         <div class="bg-white rounded-2xl shadow-xl overflow-hidden mb-8">
             <div class="px-6 py-5 border-b border-gray-100 bg-gradient-to-r from-gray-50 to-white flex justify-between items-center">
