@@ -13,6 +13,9 @@ class ForumMessage extends Model
         'content',
         'type',
         'order_index',
+        'course_id',
+        'user_id',
+        'message',
     ];
 
     // Relasi ke Pengirim (User/Siswa/Guru)

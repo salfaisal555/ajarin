@@ -1,12 +1,28 @@
 <x-app-layout>
-    <div class="flex flex-col lg:flex-row h-screen bg-gray-100 overflow-hidden">
+    <!-- PERBAIKAN 1: Menambahkan x-data Alpine.js dan menghapus flex-col -->
+    <div x-data="{ sidebarOpen: false }" class="flex h-screen bg-gray-100 overflow-hidden relative">
         
-        <div class="w-full lg:w-80 bg-white border-r border-gray-200 flex-shrink-0 flex flex-col h-full z-20">
-            <div class="p-4 border-b border-gray-200 bg-teal-600 text-white">
+        <!-- PERBAIKAN 2: Overlay Gelap untuk Mobile saat menu terbuka -->
+        <div x-show="sidebarOpen" 
+             x-transition.opacity 
+             @click="sidebarOpen = false" 
+             class="fixed inset-0 bg-gray-900/60 z-40 lg:hidden backdrop-blur-sm" 
+             style="display: none;"></div>
+
+        <!-- PERBAIKAN 3: Sidebar diubah menjadi absolute di mobile, dan static di Desktop -->
+        <div :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'" 
+             class="absolute inset-y-0 left-0 z-50 w-[85%] max-w-sm bg-white border-r border-gray-200 flex-shrink-0 flex flex-col h-full transform transition-transform duration-300 ease-in-out lg:static lg:translate-x-0 lg:w-80 shadow-2xl lg:shadow-none">
+            
+            <!-- Tombol Close (Hanya Muncul di Mobile) -->
+            <button @click="sidebarOpen = false" class="absolute top-4 right-4 p-1 text-teal-100 hover:text-white lg:hidden z-50" aria-label="Tutup Menu">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+
+            <div class="p-4 border-b border-teal-700 bg-teal-600 text-white relative">
                 <a href="{{ route('student.dashboard') }}" class="text-xs font-bold text-teal-100 hover:text-white flex items-center mb-2 transition">
                     &larr; Kembali ke Dashboard
                 </a>
-                <h2 class="font-bold text-lg leading-tight">{{ $course->title }}</h2>
+                <h2 class="font-bold text-lg leading-tight pr-8">{{ $course->title }}</h2>
                 
                 @php
                     $totalMats = $course->chapters->sum(fn($c) => $c->materials->count());
@@ -14,10 +30,10 @@
                     $percent = $totalMats > 0 ? ($doneMats / $totalMats) * 100 : 0;
                 @endphp
             
-                <div class="mt-3 w-full bg-teal-800 rounded-full h-1.5">
+                <div class="mt-3 w-full bg-teal-800 rounded-full h-1.5 overflow-hidden shadow-inner">
                     <div id="progressBar" class="bg-yellow-400 h-1.5 rounded-full transition-all duration-500" style="width: {{ $percent }}%"></div>
                 </div>
-                <p id="progressText" class="text-[10px] mt-1 text-teal-200 text-right">{{ round($percent) }}% Selesai</p>
+                <p id="progressText" class="text-[10px] mt-1 text-teal-100 font-medium text-right">{{ round($percent) }}% Selesai</p>
             </div>
 
             <div class="flex-1 overflow-y-auto p-4 space-y-6 custom-scrollbar bg-white">
@@ -35,7 +51,6 @@
                                 @php
                                     $isCompleted = in_array($material->id, $completedMaterialIds);
                                     $isActive = $currentMaterial && $currentMaterial->id == $material->id;
-                                    
                                     $renderLock = $isLocked && !$isCompleted && !$isActive;
                                 @endphp
 
@@ -75,14 +90,27 @@
             </div>
         </div>
 
-        <div class="flex-1 flex flex-col h-full overflow-hidden bg-gray-50 relative">
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col h-full overflow-hidden bg-gray-50 relative w-full">
+            
+            <!-- PERBAIKAN 4: Header Mobile dengan Tombol Hamburger -->
+            <div class="lg:hidden bg-white border-b border-gray-200 px-4 py-3 flex items-center shrink-0 shadow-sm z-20">
+                <button @click="sidebarOpen = true" class="p-2 mr-3 -ml-2 text-gray-600 hover:bg-gray-100 hover:text-teal-600 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-teal-500" aria-label="Buka Daftar Materi">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                </button>
+                <div class="flex-1 min-w-0">
+                    <p class="text-xs text-gray-500 font-bold uppercase tracking-wider truncate">Materi Saat Ini</p>
+                    <h1 class="font-bold text-gray-900 truncate text-sm sm:text-base">{{ $currentMaterial->title ?? 'Pilih Materi' }}</h1>
+                </div>
+            </div>
+
             @if($currentMaterial)
                 <div id="contentContainer" class="flex-1 overflow-y-auto scroll-smooth">
                     <div class="max-w-4xl mx-auto min-h-full flex flex-col">
                         
-                        <div class="pt-8 px-6 lg:px-12 pb-4">
-                            
-                            <nav class="flex text-sm font-medium text-gray-500 mb-6" aria-label="Breadcrumb">
+                        <div class="pt-6 lg:pt-8 px-6 lg:px-12 pb-4">
+                            <!-- Breadcrumb disembunyikan di layar sangat kecil agar rapi -->
+                            <nav class="hidden sm:flex text-sm font-medium text-gray-500 mb-6" aria-label="Breadcrumb">
                                 <ol class="inline-flex items-center space-x-1 md:space-x-3">
                                     <li class="inline-flex items-center">
                                         <a href="{{ route('student.dashboard') }}" class="inline-flex items-center hover:text-teal-600 transition-colors">
@@ -106,16 +134,17 @@
                                     </li>
                                 </ol>
                             </nav>
-                            <h1 class="text-3xl font-bold text-gray-900 leading-tight">{{ $currentMaterial->title }}</h1>
-                            <div class="mt-2 flex items-center text-sm text-gray-500 gap-4">
-                                <span class="bg-gray-200 px-2 py-0.5 rounded text-xs uppercase font-bold tracking-wide">Materi</span>
+                            
+                            <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight">{{ $currentMaterial->title }}</h1>
+                            <div class="mt-3 flex items-center text-sm text-gray-500 gap-4">
+                                <span class="bg-teal-50 text-teal-700 border border-teal-100 px-2.5 py-1 rounded-md text-xs uppercase font-bold tracking-wider shadow-sm">Materi Pembelajaran</span>
                             </div>
                         </div>
                         
-                        <hr class="border-gray-200 mx-6 lg:mx-12">
+                        <hr class="border-gray-200 mx-6 lg:mx-12 my-2">
                         
-                        <div class="px-6 lg:px-12 py-8">
-                            <article class="prose prose-lg prose-teal max-w-none text-gray-700 leading-relaxed break-words">
+                        <div class="px-6 lg:px-12 py-6">
+                            <article class="prose prose-sm sm:prose-base lg:prose-lg prose-teal max-w-none text-gray-700 leading-relaxed break-words">
                                 {!! clean($currentMaterial->content) !!}
                             </article>
                         </div>
@@ -144,8 +173,8 @@
                                     onclick="finishAndNext('{{ $nextUrl }}')"
                                     class="block w-full sm:w-auto px-8 py-3 rounded-xl font-bold text-white transition-all shadow-lg transform active:scale-95 text-center border-b-4
                                     {{ in_array($currentMaterial->id, $completedMaterialIds) 
-                                       ? 'bg-teal-600 hover:bg-teal-700 border-teal-800' 
-                                       : 'bg-gray-300 border-gray-400 cursor-not-allowed opacity-70' }}"
+                                        ? 'bg-teal-600 hover:bg-teal-700 border-teal-800' 
+                                        : 'bg-gray-300 border-gray-400 cursor-not-allowed opacity-70' }}"
                                     {{ in_array($currentMaterial->id, $completedMaterialIds) ? '' : 'disabled' }}>
                                 
                                 @if($nextMaterial)
@@ -235,11 +264,10 @@
                     if (container.scrollTop + container.clientHeight >= container.scrollHeight - 50) {
                         markAsComplete();
                     }
-                        });
+                });
             }
         });
     </script>
-    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
     <style>
         .custom-scrollbar::-webkit-scrollbar { width: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; }
