@@ -29,6 +29,7 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
 // GRUP ROUTE YANG BUTUH LOGIN (AUTH)
 Route::middleware('auth')->group(function () {
 
+    Route::post('/summernote/upload-image', [MaterialController::class, 'uploadImage'])->name('summernote.upload');
     // 1. Profile Routes
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

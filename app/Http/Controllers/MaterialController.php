@@ -77,4 +77,27 @@ class MaterialController extends Controller
         return redirect()->route('courses.curriculum', $material->course_id)
             ->with('success', 'Materi berhasil diperbarui!');
     }
+
+    // Fungsi untuk memproses upload gambar dari Summernote
+    public function uploadImage(Request $request)
+    {
+        // 1. Validasi file (harus gambar & maksimal 2MB)
+        $request->validate([
+            'file' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+        ]);
+
+        // 2. Simpan gambar ke folder storage/app/public/materials
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+            $filename = time().'_'.$file->getClientOriginalName();
+            $path = $file->storeAs('materials', $filename, 'public');
+
+            // 3. Kembalikan URL gambar agar bisa ditampilkan oleh Summernote
+            return response()->json([
+                'url' => asset('storage/'.$path),
+            ]);
+        }
+
+        return response()->json(['error' => 'Gagal mengunggah gambar'], 400);
+    }
 }

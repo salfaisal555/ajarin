@@ -82,21 +82,43 @@
 
     <script>
       $(document).ready(function() {
-          $('#summernote').summernote({
-            placeholder: 'Tulis materi di sini... Anda bisa copy-paste gambar atau embed video YouTube.',
-            tabsize: 2,
-            height: 400,
-            dialogsInBody: true,
-            toolbar: [
-              ['style', ['style']],
-              ['font', ['bold', 'underline', 'clear']],
-              ['color', ['color']],
-              ['para', ['ul', 'ol', 'paragraph']],
-              ['table', ['table']],
-              ['insert', ['link', 'picture', 'video']],
-              ['view', ['fullscreen', 'codeview', 'help']]
-            ]
-          });
-      });
+    $('#summernote').summernote({
+        dialogsInBody: true,
+        height: 400,
+        toolbar: [
+            ['style', ['bold', 'italic', 'underline', 'clear']],
+            ['font', ['strikethrough', 'superscript', 'subscript']],
+            ['fontsize', ['fontsize']],
+            ['color', ['color']],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['insert', ['link', 'picture', 'video']],
+            ['view', ['fullscreen', 'codeview', 'help']]
+        ],
+        callbacks: {
+            // INI ADALAH KODE UNTUK MENCEGAT GAMBAR BASE64
+            onImageUpload: function(files) {
+                let editor = $(this);
+                let data = new FormData();
+                data.append("file", files[0]);
+                data.append("_token", "{{ csrf_token() }}"); // Token keamanan Laravel
+
+                $.ajax({
+                    url: "{{ route('summernote.upload') }}",
+                    method: "POST",
+                    data: data,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        // Jika sukses, masukkan URL gambar ke dalam editor
+                        editor.summernote('insertImage', response.url);
+                    },
+                    error: function(xhr) {
+                        alert('Gagal mengunggah gambar. Pastikan ukuran maksimal 2MB.');
+                    }
+                });
+            }
+        }
+    });
+});
     </script>
 </x-app-layout>
